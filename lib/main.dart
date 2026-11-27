@@ -3,8 +3,14 @@ import 'common.dart';
 import 'db.dart';
 import 'add_profile_page.dart';
 import 'profiles_page.dart';
+import 'photo_store.dart';
 
-void main() => runApp(const MatrimonialApp());
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await PhotoStore.init();
+  runApp(const MatrimonialApp());
+}
 
 class MatrimonialApp extends StatelessWidget {
   const MatrimonialApp({super.key});
