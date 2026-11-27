@@ -24,6 +24,20 @@ class _AddProfilePageState extends State<AddProfilePage> {
   final professionC = TextEditingController();
   final notesC = TextEditingController();
 
+  // Assets & financial details
+  final totalAssetsC = TextEditingController();
+  final housesC = TextEditingController();
+  final houseLocC = TextEditingController();
+  final rentC = TextEditingController();
+  final landDetailsC = TextEditingController();
+  final landValueC = TextEditingController();
+  final vehiclesC = TextEditingController();
+  final otherAssetsC = TextEditingController();
+  final extraFinC = TextEditingController();
+  String? ownHouse;
+  String? agriLand;
+  String? commercial;
+
   String? gender;
   DateTime? dob;
   String marital = 'unmarried';
@@ -35,7 +49,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
   void dispose() {
     for (final c in [
       nameC, mobileC, heightC, religionC, casteC,
-      districtC, educationC, professionC, notesC
+      districtC, educationC, professionC, notesC,
+      totalAssetsC, housesC, houseLocC, rentC, landDetailsC,
+      landValueC, vehiclesC, otherAssetsC, extraFinC,
     ]) {
       c.dispose();
     }
@@ -103,6 +119,18 @@ class _AddProfilePageState extends State<AddProfilePage> {
         'education': educationC.text.trim(),
         'profession': professionC.text.trim(),
         'notes': notesC.text.trim(),
+        'total_assets': totalAssetsC.text.trim(),
+        'houses_count': housesC.text.trim(),
+        'own_house': ownHouse ?? '',
+        'house_location': houseLocC.text.trim(),
+        'rental_income': rentC.text.trim(),
+        'land_details': landDetailsC.text.trim(),
+        'land_value': landValueC.text.trim(),
+        'agri_land': agriLand ?? '',
+        'commercial': commercial ?? '',
+        'vehicles': vehiclesC.text.trim(),
+        'other_assets': otherAssetsC.text.trim(),
+        'extra_finance': extraFinC.text.trim(),
       }),
     });
     for (final x in picked) {
@@ -143,6 +171,13 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 fontSize: 16, fontWeight: FontWeight.w600, color: maroon)),
       );
 
+  Widget sectionTitle(String key) => Padding(
+        padding: const EdgeInsets.only(top: 12, bottom: 12),
+        child: Text(t(key),
+            style: const TextStyle(
+                fontSize: 20, fontWeight: FontWeight.bold, color: maroon)),
+      );
+
   Widget chips(List<String> keys, String? selected, void Function(String) on) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -158,6 +193,16 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 ))
             .toList(),
       ),
+    );
+  }
+
+  Widget yesNo(String labelKey, String? value, void Function(String) on) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        label(labelKey),
+        chips(['yes', 'no'], value, on),
+      ],
     );
   }
 
@@ -284,7 +329,21 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 return null;
               },
             ),
-            const SizedBox(height: 8),
+            const Divider(height: 32),
+            sectionTitle('assets_title'),
+            field(totalAssetsC, 'total_assets', type: TextInputType.number),
+            field(housesC, 'houses_count', type: TextInputType.number),
+            yesNo('own_house', ownHouse, (v) => ownHouse = v),
+            field(houseLocC, 'house_location'),
+            field(rentC, 'rental_income', type: TextInputType.number),
+            field(landDetailsC, 'land_details', lines: 2),
+            field(landValueC, 'land_value', type: TextInputType.number),
+            yesNo('agri_land', agriLand, (v) => agriLand = v),
+            yesNo('commercial', commercial, (v) => commercial = v),
+            field(vehiclesC, 'vehicles'),
+            field(otherAssetsC, 'other_assets', lines: 2),
+            field(extraFinC, 'extra_finance', lines: 2),
+            const Divider(height: 32),
             label('status'),
             chips(['active', 'pending', 'married'], status, (v) => status = v),
             field(notesC, 'notes', lines: 3),
