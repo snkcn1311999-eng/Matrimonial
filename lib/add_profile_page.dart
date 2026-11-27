@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'common.dart';
 import 'db.dart';
+import 'photo_store.dart';
 
 class AddProfilePage extends StatefulWidget {
   const AddProfilePage({super.key});
@@ -26,6 +29,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
   String marital = 'unmarried';
   String status = 'active';
   bool saving = false;
+  final List<XFile> picked = [];
 
   @override
   void dispose() {
@@ -36,6 +40,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
       c.dispose();
     }
     super.dispose();
+  }
+
+  Future<void> pickPhotos() async {
+    final files = await PhotoStore.pick();
+    if (files.isNotEmpty) setState(() => picked.addAll(files));
   }
 
   Future<void> pickDob() async {
@@ -79,7 +88,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
       if (ok != true) return;
     }
     setState(() => saving = true);
-    await AppDb.insert({
+    final id = await AppDb.insert({
       'name': nameC.text.trim(),
       'gender': gender,
       'dob': dob!.toIso8601String().substring(0, 10),
@@ -96,6 +105,10 @@ class _AddProfilePageState extends State<AddProfilePage> {
         'notes': notesC.text.trim(),
       }),
     });
+    for (final x in picked) {
+      final name = await PhotoStore.save(x);
+      await AppDb.addPhoto(id, name);
+    }
     if (!mounted) return;
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(t('saved'))));
@@ -148,6 +161,64 @@ class _AddProfilePageState extends State<AddProfilePage> {
     );
   }
 
+  Widget photoSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        label('photos'),
+        if (picked.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (var i = 0; i < picked.length; i++)
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(File(picked[i].path),
+                            width: 90,
+                            height: 90,
+                            fit: BoxFit.cover,
+                            cacheWidth: 270),
+                      ),
+                      Positioned(
+                        top: 2,
+                        right: 2,
+                        child: GestureDetector(
+                          onTap: () => setState(() => picked.removeAt(i)),
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                                color: maroon, shape: BoxShape.circle),
+                            child: const Icon(Icons.close,
+                                size: 16, color: cream),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(52),
+            backgroundColor: Colors.white,
+            foregroundColor: maroon,
+            side: const BorderSide(color: gold),
+          ),
+          icon: const Icon(Icons.add_a_photo),
+          label: Text(t('add_photos')),
+          onPressed: pickPhotos,
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final age = dob == null
@@ -164,6 +235,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 style: const TextStyle(
                     fontSize: 20, fontWeight: FontWeight.bold, color: maroon)),
             const SizedBox(height: 12),
+            photoSection(),
             field(nameC, 'name', req: true),
             label('gender'),
             chips(['male', 'female'], gender, (v) => gender = v),
