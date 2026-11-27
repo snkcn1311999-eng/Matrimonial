@@ -339,6 +339,56 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   row(t('mobile'), p['mobile'] as String?),
                   row(t('status'), t((p['status'] ?? '') as String)),
                   row(t('notes'), e['notes'] as String?),
+                                    if ([
+                    'total_assets', 'houses_count', 'own_house',
+                    'house_location', 'rental_income', 'land_details',
+                    'land_value', 'agri_land', 'commercial', 'vehicles',
+                    'other_assets', 'extra_finance'
+                  ].any((k) => (e[k] ?? '').toString().isNotEmpty)) ...[
+                    const Divider(height: 28),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(t('assets_title'),
+                          style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: maroon)),
+                    ),
+                    const SizedBox(height: 6),
+                    row(t('total_assets'),
+                        (e['total_assets'] ?? '').toString().isEmpty
+                            ? null
+                            : '₹ ${e['total_assets']}'),
+                    row(t('houses_count'), e['houses_count'] as String?),
+                    row(
+                        t('own_house'),
+                        (e['own_house'] ?? '').toString().isEmpty
+                            ? null
+                            : t(e['own_house'] as String)),
+                    row(t('house_location'), e['house_location'] as String?),
+                    row(t('rental_income'),
+                        (e['rental_income'] ?? '').toString().isEmpty
+                            ? null
+                            : '₹ ${e['rental_income']}'),
+                    row(t('land_details'), e['land_details'] as String?),
+                    row(t('land_value'),
+                        (e['land_value'] ?? '').toString().isEmpty
+                            ? null
+                            : '₹ ${e['land_value']}'),
+                    row(
+                        t('agri_land'),
+                        (e['agri_land'] ?? '').toString().isEmpty
+                            ? null
+                            : t(e['agri_land'] as String)),
+                    row(
+                        t('commercial'),
+                        (e['commercial'] ?? '').toString().isEmpty
+                            ? null
+                            : t(e['commercial'] as String)),
+                    row(t('vehicles'), e['vehicles'] as String?),
+                    row(t('other_assets'), e['other_assets'] as String?),
+                    row(t('extra_finance'), e['extra_finance'] as String?),
+                  ],
                 ],
               ),
             ),
