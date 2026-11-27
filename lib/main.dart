@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'common.dart';
 import 'db.dart';
+import 'photo_store.dart';
 import 'add_profile_page.dart';
 import 'profiles_page.dart';
-import 'photo_store.dart';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +18,7 @@ class MatrimonialApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Matrimonial Admin',
+      title: 'Matrimonial App',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
@@ -72,6 +71,40 @@ class _DashboardPageState extends State<DashboardPage> {
     load();
   }
 
+  Widget header() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: gold, width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Image.asset(
+            'assets/logo.png',
+            height: 84,
+            errorBuilder: (_, __, ___) =>
+                const Icon(Icons.favorite, size: 60, color: maroon),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Text(
+              'ஸ்ரீ சுபமங்கலம் திருமண தகவல் மையம்',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: maroon,
+                height: 1.3,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget stat(String key, String label) {
     return Card(
       color: Colors.white,
@@ -117,7 +150,7 @@ class _DashboardPageState extends State<DashboardPage> {
       builder: (context, lang, _) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(t('title')),
+            title: const Text('Matrimonial App'),
             actions: [
               TextButton(
                 onPressed: () => langNotifier.value =
@@ -130,6 +163,7 @@ class _DashboardPageState extends State<DashboardPage> {
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              header(),
               GridView.count(
                 crossAxisCount: 3,
                 shrinkWrap: true,
