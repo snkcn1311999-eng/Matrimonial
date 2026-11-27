@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'strings_photos.dart';
 
 const maroon = Color(0xFF800000);
 const cream = Color(0xFFFFF8E7);
@@ -7,7 +8,10 @@ const gold = Color(0xFFC9A227);
 // Default language: 'ta' = Tamil, 'en' = English
 final ValueNotifier<String> langNotifier = ValueNotifier<String>('ta');
 
-String t(String key) => strings[langNotifier.value]?[key] ?? key;
+String t(String key) =>
+    strings[langNotifier.value]?[key] ??
+    photoStrings[langNotifier.value]?[key] ??
+    key;
 
 int? ageFromDob(String? dob) {
   if (dob == null || dob.isEmpty) return null;
