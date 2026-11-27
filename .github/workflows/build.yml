@@ -22,9 +22,18 @@ jobs:
           cache: true
 
       - name: Generate Android project files
-        run: flutter create --platforms=android --org com.matrimonial --project-name matrimonial_admin .
+        run: |
+          flutter create --platforms=android --org com.matrimonial --project-name matrimonial_admin /tmp/gen
+          cp -r /tmp/gen/android ./android
+
+      - name: Set app name
+        run: sed -i 's/android:label="[^"]*"/android:label="Matrimonial App"/' android/app/src/main/AndroidManifest.xml
 
       - run: flutter pub get
+
+      - name: Create launcher icons
+        continue-on-error: true
+        run: dart run flutter_launcher_icons
 
       - name: Build release APK
         run: flutter build apk --release
